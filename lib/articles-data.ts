@@ -2341,6 +2341,16 @@ export function getArticleById(id: string): Article | undefined {
   return articles.find((article) => article.id === id)
 }
 
+export function getArticlesByCategory(categorySlug: string): Article[] {
+  return articles
+    .filter((article) => article.categorySlug === categorySlug)
+    .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+}
+
+export function getArticleById(id: string): Article | undefined {
+  return articles.find((article) => article.id === id)
+}
+
 export function getCategoryInfo(categorySlug: string) {
   const categoryMap: Record<string, { title: string; description: string }> = {
     "marriott-hotels": {
@@ -2365,16 +2375,20 @@ export function getCategoryInfo(categorySlug: string) {
     },
     "third-party-platforms": {
       title: "Third-Party Booking Platforms",
-      description: "Expedia Travel Rewards Program Helps You Save on Hotel Bookings",
+      description:
+        "Expedia Travel Rewards Program Helps You Save on Hotel Bookings",
     },
-    "tips": {
+    tips: {
       title: "Hotel Booking Tips & Guides",
-      description: "Essential tips, guides and knowledge for smart hotel bookings",
+      description:
+        "Essential tips, guides and knowledge for smart hotel bookings",
     },
     "travel-guides": {
       title: "Essential Travel Guides",
-      description: "Travel guides you'll definitely use - comprehensive tips and guides for smart travelers",
+      description:
+        "Travel guides you'll definitely use - comprehensive tips and guides for smart travelers",
     },
   }
+
   return categoryMap[categorySlug] || { title: "Category", description: "" }
 }
