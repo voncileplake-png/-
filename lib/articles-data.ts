@@ -1571,13 +1571,6 @@ For many visitors, a first trip to China is not just another vacation, but a com
     author: "Travel Deals Hub",
     keywords: ["China travel guide", "first time traveling to China", "China travel tips", "planning a trip to China", "China VPN", "China payments", "China transportation"]
   },
-]
-
-export function getArticlesByCategory(categorySlug: string): Article[] {
-  return articles
-    .filter((article) => article.categorySlug === categorySlug)
-    .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
-}.
 
   // ─── NEW ARTICLES START ───────────────────────────────────────────────────
 
@@ -2336,16 +2329,7 @@ European hotel savings require slightly more planning than domestic travel — s
   },
 
   // ─── NEW ARTICLES END ─────────────────────────────────────────────────────
-
-export function getArticleById(id: string): Article | undefined {
-  return articles.find((article) => article.id === id)
-}
-
-export function getArticlesByCategory(categorySlug: string): Article[] {
-  return articles
-    .filter((article) => article.categorySlug === categorySlug)
-    .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
-}
+]
 
 export function getArticleById(id: string): Article | undefined {
   return articles.find((article) => article.id === id)
@@ -2375,20 +2359,16 @@ export function getCategoryInfo(categorySlug: string) {
     },
     "third-party-platforms": {
       title: "Third-Party Booking Platforms",
-      description:
-        "Expedia Travel Rewards Program Helps You Save on Hotel Bookings",
+      description: "Expedia Travel Rewards Program Helps You Save on Hotel Bookings",
     },
-    tips: {
+    "tips": {
       title: "Hotel Booking Tips & Guides",
-      description:
-        "Essential tips, guides and knowledge for smart hotel bookings",
+      description: "Essential tips, guides and knowledge for smart hotel bookings",
     },
     "travel-guides": {
       title: "Essential Travel Guides",
-      description:
-        "Travel guides you'll definitely use - comprehensive tips and guides for smart travelers",
+      description: "Travel guides you'll definitely use - comprehensive tips and guides for smart travelers",
     },
   }
-
   return categoryMap[categorySlug] || { title: "Category", description: "" }
 }
