@@ -2341,6 +2341,10 @@ export function getCategoryInfo(categorySlug: string) {
       title: "Marriott Hotels",
       description: "Marriott Hotels Corporate and Discount Codes",
     },
+    "hilton-hotels": {
+      title: "Hilton Hotels",
+      description: "Hilton Hotels Corporate Codes & Honors Discount Rates",
+    },
     "best-western-hotels": {
       title: "Best Western Hotels",
       description: "Best Western Hotels Corporate Codes",
@@ -2371,4 +2375,10 @@ export function getCategoryInfo(categorySlug: string) {
     },
   }
   return categoryMap[categorySlug] || { title: "Category", description: "" }
+}
+
+export function getArticlesByCategory(categorySlug: string): Article[] {
+  return articles
+    .filter((article) => article.categorySlug === categorySlug)
+    .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
 }
