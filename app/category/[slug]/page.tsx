@@ -1,0 +1,214 @@
+import React from "react"
+import { Folder } from "lucide-react"
+import { getArticlesByCategory, getCategoryInfo } from "@/lib/articles-data"
+import { Sidebar } from "@/components/sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { Footer } from "@/components/footer"
+import Link from "next/link"
+import type { Metadata } from "next"
+
+interface CategoryPageProps {
+  params: { slug: string }
+}
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const categoryInfo = getCategoryInfo(params.slug)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hotelcorporatecodes.com"
+  const categoryUrl = `${siteUrl}/category/${params.slug}`
+
+  return {
+    title: `${categoryInfo.title} | Hotel Corporate Codes`,
+    description:
+      categoryInfo.description || `Browse articles in ${categoryInfo.title} category.`,
+    openGraph: {
+      title: `${categoryInfo.title} | Hotel Corporate Codes`,
+      description:
+        categoryInfo.description || `Browse articles in ${categoryInfo.title} category.`,
+      url: categoryUrl,
+      siteName: "Hotel Corporate Codes",
+      locale: "en_US",
+      type: "website",
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${categoryInfo.title} | Hotel Corporate Codes`,
+      description:
+        categoryInfo.description || `Browse articles in ${categoryInfo.title} category.`,
+      images: ["/og-image.jpg"],
+    },
+    alternates: { canonical: categoryUrl },
+  }
+}
+
+export const revalidate = 3600
+
+export default function CategoryPage({ params }: CategoryPageProps) {
+  const articles = getArticlesByCategory(params.slug)
+  const categoryInfo = getCategoryInfo(params.slug)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hotelcorporatecodes.com"
+
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: categoryInfo.title,
+        item: `${siteUrl}/category/${params.slug}`,
+      },
+    ],
+  }
+
+  const collectionPageStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: categoryInfo.title,
+    description: categoryInfo.description,
+    url: `${siteUrl}/category/${params.slug}`,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: articles.length,
+      itemListElement: articles.map((article, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Article",
+          headline: article.title,
+          description: article.excerpt,
+          url: `${siteUrl}/article/${article.id}`,
+        },
+      })),
+    },
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageStructuredData) }}
+      />
+
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <SiteHeader />
+
+        <div className="container mx-auto px-4 py-8 flex-1">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground mb-6">
+            <ol
+              className="flex items-center gap-2"
+              itemScope
+              itemType="https://schema.org/BreadcrumbList"
+            >
+              <li
+                itemProp="itemListElement"
+                itemScope
+                itemType="https://schema.org/ListItem"
+              >
+                <Link href="/" className="hover:text-foreground" itemProp="item">
+                  <span itemProp="name">Home</span>
+                </Link>
+                <meta itemProp="position" content="1" />
+              </li>
+              <span className="mx-2">/</span>
+              <li
+                itemProp="itemListElement"
+                itemScope
+                itemType="https://schema.org/ListItem"
+              >
+                <span className="text-foreground" itemProp="name">
+                  {categoryInfo.title}
+                </span>
+                <meta itemProp="position" content="2" />
+              </li>
+            </ol>
+          </nav>
+
+          {/* Category Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <Folder className="w-8 h-8 text-teal-600" aria-hidden="true" />
+              <h1 className="text-3xl font-bold">{categoryInfo.title}</h1>
+            </div>
+            {categoryInfo.description && (
+              <p className="text-muted-foreground ml-11 max-w-2xl">{categoryInfo.description}</p>
+            )}
+            <p className="text-sm text-muted-foreground ml-11 mt-1">
+              {articles.length} article{articles.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+            {/* Articles List */}
+            <div className="space-y-6">
+              {articles.map((article) => (
+                <article
+                  key={article.id}
+                  className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+                  itemScope
+                  itemType="https://schema.org/Article"
+                >
+                  <h2 className="text-xl font-semibold mb-3">
+                    <Link
+                      href={`/article/${article.id}`}
+                      className="hover:text-teal-600 transition-colors"
+                      itemProp="headline"
+                    >
+                      {article.title}
+                    </Link>
+                  </h2>
+                  <p
+                    className="text-muted-foreground mb-4 leading-relaxed text-sm"
+                    itemProp="description"
+                  >
+                    {article.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={`/article/${article.id}`}
+                      className="text-teal-600 hover:text-teal-700 font-medium text-sm inline-flex items-center gap-1"
+                      itemProp="url"
+                    >
+                      Read More →
+                    </Link>
+                    <time
+                      className="text-xs text-muted-foreground"
+                      dateTime={article.publishedAt.toISOString()}
+                      itemProp="datePublished"
+                    >
+                      {article.publishedAt.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </time>
+                  </div>
+                </article>
+              ))}
+
+              {articles.length === 0 && (
+                <div className="bg-white rounded-lg p-12 text-center">
+                  <p className="text-muted-foreground">No articles found in this category.</p>
+                  <Link href="/" className="text-teal-600 hover:underline text-sm mt-2 inline-block">
+                    ← Back to Home
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            <Sidebar />
+          </div>
+        </div>
+
+        <Footer />
+      </div>
+    </>
+  )
+}
