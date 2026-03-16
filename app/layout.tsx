@@ -57,7 +57,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
- <meta name="google-site-verification" content="kqoO4-TyosPpznPmlpmMTOS0VAxBk5td2yMRXyr61nI" />
 }
 
 export default function RootLayout({
@@ -68,8 +67,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* ✅ FIXED: Removed third-party ad network script that was blocking AdSense approval */}
-        {/* ✅ FIXED: Removed unrelated 3rd-party verification meta tags */}
+<meta name="google-site-verification" content="kqoO4-TyosPpznPmlpmMTOS0VAxBk5td2yMRXyr61nI" />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
         <Suspense fallback={null}>{children}</Suspense>
